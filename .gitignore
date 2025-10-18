@@ -1,0 +1,14 @@
+
+build/
+dist/
+bin/
+obj/
+
+*.log
+
+
+node_modules/
+venv/
+__pycache__/
+
+.vscode/
