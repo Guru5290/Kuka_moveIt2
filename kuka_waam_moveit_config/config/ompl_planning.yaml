@@ -1,0 +1,21 @@
+planning_plugin: ompl_interface/OMPLPlanner
+
+# Request more planning time for collision-aware paths
+request_adapters: >-
+  default_planner_request_adapters/AddTimeOptimalParameterization
+  default_planner_request_adapters/FixWorkspaceBounds
+  default_planner_request_adapters/FixStartStateBounds
+  default_planner_request_adapters/FixStartStateCollision
+  default_planner_request_adapters/FixStartStatePathConstraints
+
+planning_time: 5.0  # seconds
+max_velocity_scaling_factor: 0.5  # 50% of max for WAAM
+max_acceleration_scaling_factor: 0.3  # 30% of max for WAAM
+
+manipulator:
+  planner_configs:
+    - RRTConnect
+    - RRTstar
+    - TRRT
+  projection_evaluator: joints(joint_a1,joint_a2)
+  longest_valid_segment_fraction: 0.005

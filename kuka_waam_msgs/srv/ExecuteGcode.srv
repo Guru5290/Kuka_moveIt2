@@ -1,0 +1,11 @@
+string gcode_file        # Path to G-code file
+float32 threshold        # Point filtering threshold (mm)
+bool preview            # Preview only, don't execute
+bool enable_welding     # Enable actual welding
+
+---
+
+bool success            # Execution successful
+string message          # Status message
+uint32 layers_completed # Number of layers completed
+float32 total_time      # Total execution time (s)

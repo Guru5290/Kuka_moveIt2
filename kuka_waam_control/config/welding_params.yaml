@@ -1,0 +1,31 @@
+# WAAM Process Parameters
+waam_process:
+  material: "ER70S-6"  # Wire material
+  wire_diameter: 1.2    # mm
+  
+  layer:
+    height: 2.0         # mm
+    width: 6.0          # mm
+    overlap: 0.3        # 30% overlap between beads
+    
+  thermal:
+    interpass_temp_max: 250.0   # °C
+    preheat_temp: 150.0         # °C
+    cooling_time: 30.0          # seconds between layers
+    
+  welding:
+    mode: "GMAW"                # Gas Metal Arc Welding
+    voltage: 24.0               # V
+    current: 180.0              # A
+    wire_feed_rate: 8.0         # m/min
+    travel_speed: 8.0           # mm/s
+    
+  gas:
+    type: "Ar-CO2 (80-20)"
+    flow_rate: 15.0             # L/min
+    
+  safety:
+    max_temperature: 800.0      # °C
+    min_arc_voltage: 18.0       # V
+    max_arc_voltage: 30.0       # V
+    emergency_retract_height: 100.0  # mm

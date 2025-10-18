@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="kr6_r900_waam">
+  
+  <!-- Include base robot -->
+  <xacro:include filename="$(find kuka_agilus_support)/urdf/kr6_r900_sixx_macro.xacro"/>
+  
+  <!-- Include welding torch -->
+  <xacro:include filename="$(find kuka_waam_description)/urdf/welding_torch.urdf.xacro"/>
+  
+  <!-- Parameters -->
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="mode" default="mock"/>
+  <xacro:arg name="use_fake_hardware" default="true"/>
+  
+  <!-- World frame -->
+  <link name="world"/>
+  
+  <!-- Instantiate robot -->
+  <xacro:kr6_r900_sixx 
+    prefix="$(arg prefix)"
+    mode="$(arg mode)"
+    use_fake_hardware="$(arg use_fake_hardware)">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:kr6_r900_sixx>
+  
+  <!-- Fixed joint from world to robot base -->
+  <joint name="world_to_base_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="$(arg prefix)base_link"/>
+  </joint>
+  
+  <!-- Attach welding torch to flange -->
+  <xacro:welding_torch prefix="$(arg prefix)" parent_link="$(arg prefix)flange">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:welding_torch>
+  
+  <!-- Update tool0 to be at TCP -->
+  <joint name="$(arg prefix)flange_to_tool0" type="fixed">
+    <origin xyz="0 0 0.232" rpy="0 0 0"/>  <!-- Height to TCP -->
+    <parent link="$(arg prefix)flange"/>
+    <child link="$(arg prefix)tool0"/>
+  </joint>
+  
+  <!-- Gazebo plugins -->
+  <xacro:if value="$(arg use_fake_hardware)">
+    <gazebo>
+      <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <parameters>$(find kuka_waam_description)/config/ros2_controllers.yaml</parameters>
+      </plugin>
+    </gazebo>
+  </xacro:if>
+  
+  <!-- Welding torch Gazebo properties -->
+  <gazebo reference="$(arg prefix)torch_body_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="$(arg prefix)contact_tip_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  
+  <gazebo reference="$(arg prefix)tcp_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+  
+  <!-- Optional: Welding effect plugin -->
+  <gazebo>
+    <plugin name="welding_torch_plugin" filename="libwelding_torch_plugin.so">
+      <arc_topic>/welding_state</arc_topic>
+      <tcp_link>$(arg prefix)tcp_link</tcp_link>
+      <heat_radius>0.01</heat_radius>
+      <heat_intensity>1000.0</heat_intensity>
+    </plugin>
+  </gazebo>
+  
+</robot>

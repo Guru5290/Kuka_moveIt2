@@ -1,0 +1,12 @@
+bool enable_welding     # Enable/disable welding
+float32 voltage         # Arc voltage (V), 0 = no change
+float32 current         # Welding current (A), 0 = no change
+float32 wire_feed_rate  # Wire feed rate (m/min), 0 = no change
+float32 travel_speed    # Travel speed (mm/s), 0 = no change
+string weld_mode        # Welding mode
+
+---
+
+bool success
+string message
+WeldingState current_params  # Current parameters after update
