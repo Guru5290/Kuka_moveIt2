@@ -1,0 +1,87 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++-11 - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found urdf: 2.6.1 (/opt/ros/humble/share/urdf/cmake)
+-- Found xacro: 2.1.1 (/opt/ros/humble/share/xacro/cmake)
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- xacro: determining deps for: srdf/kr_arm.srdf.xacro ...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/d/Kuka_moveIt2/build/kuka_kr_moveit_config
+[ 10%] [34m[1mxacro: generating kr6_r700_sixx_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 20%] [34m[1mxacro: generating kr6_r900_sixx_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 30%] [34m[1mxacro: generating kr16_r2010_2_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 40%] [34m[1mxacro: generating kr10_r1100_2_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 40%] Built target kuka_kr_moveit_config_kr6_r700_sixx
+[ 50%] [34m[1mxacro: generating kr70_r2100_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 50%] Built target kuka_kr_moveit_config_kr6_r900_sixx
+[ 50%] Built target kuka_kr_moveit_config_kr10_r1100_2
+[ 50%] Built target kuka_kr_moveit_config_kr16_r2010_2
+[ 60%] [34m[1mxacro: generating kr150_r3100_2_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 70%] [34m[1mxacro: generating kr210_r3100_2_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 80%] [34m[1mxacro: generating kr210_r2700_2_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 80%] Built target kuka_kr_moveit_config_kr70_r2100
+[ 90%] [34m[1mxacro: generating kr240_r3330_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[ 90%] Built target kuka_kr_moveit_config_kr240_r3330
+[ 90%] Built target kuka_kr_moveit_config_kr150_r3100_2
+[ 90%] Built target kuka_kr_moveit_config_kr210_r3100_2
+[ 90%] Built target kuka_kr_moveit_config_kr210_r2700_2
+[100%] [34m[1mxacro: generating kr560_r3100_2_arm.srdf from srdf/kr_arm.srdf.xacro[0m
+[100%] Built target kuka_kr_moveit_config_kr560_r3100_2
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr6_r700_sixx_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr6_r900_sixx_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr10_r1100_2_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr16_r2010_2_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr70_r2100_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr150_r3100_2_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr210_r2700_2_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr210_r3100_2_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr240_r3330_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/urdf/kr560_r3100_2_arm.srdf
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/config/chomp_planning.yaml
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/config/kinematics.yaml
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/config/moveit_controllers.yaml
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/config/ompl_planning.yaml
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/config/pilz_cartesian_limits.yaml
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/config/stomp_planning.yaml
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/srdf/kr_arm.srdf.xacro
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/srdf/kr_arm_macro.xacro
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/launch/moveit_planning_fake_hardware.launch.py
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/launch/moveit_planning_gazebo.launch.py
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/ament_index/resource_index/package_run_dependencies/kuka_kr_moveit_config
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/ament_index/resource_index/parent_prefix_path/kuka_kr_moveit_config
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/environment/ament_prefix_path.sh
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/environment/ament_prefix_path.dsv
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/environment/path.sh
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/environment/path.dsv
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/local_setup.bash
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/local_setup.sh
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/local_setup.zsh
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/local_setup.dsv
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/package.dsv
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/ament_index/resource_index/packages/kuka_kr_moveit_config
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/cmake/kuka_kr_moveit_configConfig.cmake
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/cmake/kuka_kr_moveit_configConfig-version.cmake
+-- Symlinking: /home/d/Kuka_moveIt2/install/kuka_kr_moveit_config/share/kuka_kr_moveit_config/package.xml

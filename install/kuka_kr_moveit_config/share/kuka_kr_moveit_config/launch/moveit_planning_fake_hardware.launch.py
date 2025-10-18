@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/kuka_kr_moveit_config/launch/moveit_planning_fake_hardware.launch.py

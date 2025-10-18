@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/kuka_gazebo/launch/gazebo.launch.py

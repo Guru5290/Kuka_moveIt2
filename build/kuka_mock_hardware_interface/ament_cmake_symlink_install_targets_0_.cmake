@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/d/Kuka_moveIt2/build/kuka_mock_hardware_interface/libkuka_mock_hardware_interface.so" "TARGETS" "kuka_mock_hardware_interface" "DESTINATION" "lib/kuka_mock_hardware_interface")

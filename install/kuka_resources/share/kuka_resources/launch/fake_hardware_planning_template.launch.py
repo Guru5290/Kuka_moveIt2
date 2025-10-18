@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/kuka_resources/launch/fake_hardware_planning_template.launch.py

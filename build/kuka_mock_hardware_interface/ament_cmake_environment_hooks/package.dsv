@@ -1,0 +1,4 @@
+source;share/kuka_mock_hardware_interface/local_setup.bash
+source;share/kuka_mock_hardware_interface/local_setup.dsv
+source;share/kuka_mock_hardware_interface/local_setup.sh
+source;share/kuka_mock_hardware_interface/local_setup.zsh

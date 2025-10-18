@@ -1,0 +1,1 @@
+controller_manager:kuka_resources:moveit:moveit_planners:robot_state_publisher:rviz2:urdf:xacro

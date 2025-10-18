@@ -1,0 +1,160 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-c6e737453af99b10ab55.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "kuka_kr_moveit_config",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr10_r1100_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr10_r1100_2-e408b45b6ac5dbf17967.json",
+					"name" : "kuka_kr_moveit_config_kr10_r1100_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr150_r3100_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr150_r3100_2-14e5e013567767a3a6bf.json",
+					"name" : "kuka_kr_moveit_config_kr150_r3100_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr16_r2010_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr16_r2010_2-56e4629c09e448dd2382.json",
+					"name" : "kuka_kr_moveit_config_kr16_r2010_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr210_r2700_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr210_r2700_2-e109ea8e339814911800.json",
+					"name" : "kuka_kr_moveit_config_kr210_r2700_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr210_r3100_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr210_r3100_2-eb4a024367d976a9ef55.json",
+					"name" : "kuka_kr_moveit_config_kr210_r3100_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr240_r3330::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr240_r3330-4ecf897a25ec256ed7e8.json",
+					"name" : "kuka_kr_moveit_config_kr240_r3330",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr560_r3100_2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr560_r3100_2-933575a4498ca7a49425.json",
+					"name" : "kuka_kr_moveit_config_kr560_r3100_2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr6_r700_sixx::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr6_r700_sixx-e248eebface447c295c1.json",
+					"name" : "kuka_kr_moveit_config_kr6_r700_sixx",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr6_r900_sixx::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr6_r900_sixx-00ee8de3e6001698ddd6.json",
+					"name" : "kuka_kr_moveit_config_kr6_r900_sixx",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_kr70_r2100::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_kr70_r2100-b7683b7c1612a165a478.json",
+					"name" : "kuka_kr_moveit_config_kr70_r2100",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kuka_kr_moveit_config_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kuka_kr_moveit_config_uninstall-7e1a0766d85341f542ee.json",
+					"name" : "kuka_kr_moveit_config_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-7e3aed8a084fc7fca620.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/d/Kuka_moveIt2/build/kuka_kr_moveit_config",
+		"source" : "/home/d/Kuka_moveIt2/kuka_kr_moveit_config"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

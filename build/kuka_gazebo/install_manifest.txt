@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/install/kuka_gazebo/lib/kuka_gazebo/gazebo_moveit_example

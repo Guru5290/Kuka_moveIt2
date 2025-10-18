@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_lbr_iisy_support/ament_cmake_environment_hooks/local_setup.sh

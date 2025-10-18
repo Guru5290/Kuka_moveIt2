@@ -1,0 +1,3 @@
+source;share/kuka_agilus_support/environment/ament_prefix_path.sh
+source;share/kuka_agilus_support/environment/path.sh
+source;share/kuka_agilus_support/environment/kuka_agilus_support.dsv

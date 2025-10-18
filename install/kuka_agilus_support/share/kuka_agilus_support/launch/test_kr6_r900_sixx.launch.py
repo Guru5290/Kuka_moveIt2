@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/kuka_agilus_support/launch/test_kr6_r900_sixx.launch.py
