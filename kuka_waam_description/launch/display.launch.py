@@ -3,6 +3,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterValue  # ADDED
 from launch import conditions
 from launch.conditions import IfCondition, UnlessCondition
 import launch
@@ -59,7 +60,10 @@ def generate_launch_description():
         'mode:=mock'
     ])
     
-    robot_description = {'robot_description': robot_description_content}
+    # FIX: Wrap in ParameterValue
+    robot_description = {
+        'robot_description': ParameterValue(robot_description_content, value_type=str)
+    }
     
     # Robot State Publisher
     robot_state_publisher_node = Node(

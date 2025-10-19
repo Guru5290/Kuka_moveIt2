@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot name="kr6_r900_waam">
-    
     <!-- Planning Groups -->
     <group name="manipulator">
         <chain base_link="base_link" tip_link="tool0"/>
     </group>
     
-    <!-- End Effector -->
-    <end_effector name="welding_torch" parent_link="tool0" group="manipulator"/>
+    <!-- End Effector - FIXED: Removed group attribute -->
+    <end_effector name="welding_torch" parent_link="tool0"/>
     
     <!-- Virtual Joint -->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
@@ -65,5 +64,4 @@
         <joint name="joint_5" value="1.5708"/>
         <joint name="joint_6" value="0.0"/>
     </group_state>
-    
 </robot>
