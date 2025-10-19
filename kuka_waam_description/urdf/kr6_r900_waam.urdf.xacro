@@ -21,7 +21,7 @@
   
   <!-- Attach welding torch to flange -->
   <xacro:welding_torch prefix="$(arg prefix)" parent_link="$(arg prefix)flange">
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 1.57 0"/>
   </xacro:welding_torch>
   
   <!-- ADD THIS: ros2_control configuration -->

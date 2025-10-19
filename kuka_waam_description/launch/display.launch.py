@@ -94,7 +94,7 @@ def generate_launch_description():
     rviz_config = PathJoinSubstitution([
         FindPackageShare('kuka_waam_description'),
         'config',
-        'view_robot.rviz'
+        'default.rviz'
     ])
     
     rviz_node = Node(
