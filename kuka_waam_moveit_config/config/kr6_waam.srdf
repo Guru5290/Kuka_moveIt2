@@ -40,30 +40,30 @@
     
     <!-- Group States (Named Poses) -->
     <group_state name="home" group="manipulator">
-        <joint name="joint_a1" value="-0.2123"/>
-        <joint name="joint_a2" value="-0.5106"/>
-        <joint name="joint_a3" value="1.8118"/>
-        <joint name="joint_a4" value="0.1279"/>
-        <joint name="joint_a5" value="1.2427"/>
-        <joint name="joint_a6" value="-1.7872"/>
+        <joint name="joint_1" value="-0.2123"/>
+        <joint name="joint_2" value="-0.5106"/>
+        <joint name="joint_3" value="1.8118"/>
+        <joint name="joint_4" value="0.1279"/>
+        <joint name="joint_5" value="1.2427"/>
+        <joint name="joint_6" value="-1.7872"/>
     </group_state>
     
     <group_state name="ready" group="manipulator">
-        <joint name="joint_a1" value="0.0"/>
-        <joint name="joint_a2" value="-0.7854"/>
-        <joint name="joint_a3" value="1.5708"/>
-        <joint name="joint_a4" value="0.0"/>
-        <joint name="joint_a5" value="0.7854"/>
-        <joint name="joint_a6" value="0.0"/>
+        <joint name="joint_1" value="0.0"/>
+        <joint name="joint_2" value="-0.7854"/>
+        <joint name="joint_3" value="1.5708"/>
+        <joint name="joint_4" value="0.0"/>
+        <joint name="joint_5" value="0.7854"/>
+        <joint name="joint_6" value="0.0"/>
     </group_state>
     
     <group_state name="vertical" group="manipulator">
-        <joint name="joint_a1" value="0.0"/>
-        <joint name="joint_a2" value="0.0"/>
-        <joint name="joint_a3" value="1.5708"/>
-        <joint name="joint_a4" value="0.0"/>
-        <joint name="joint_a5" value="1.5708"/>
-        <joint name="joint_a6" value="0.0"/>
+        <joint name="joint_1" value="0.0"/>
+        <joint name="joint_2" value="0.0"/>
+        <joint name="joint_3" value="1.5708"/>
+        <joint name="joint_4" value="0.0"/>
+        <joint name="joint_5" value="1.5708"/>
+        <joint name="joint_6" value="0.0"/>
     </group_state>
     
 </robot>

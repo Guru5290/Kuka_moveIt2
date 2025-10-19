@@ -1,25 +1,25 @@
 initial_positions:
-  joint_a1: 0.0      # rad
-  joint_a2: -0.5106  # rad (-29.24 deg)
-  joint_a3: 1.8118   # rad (103.79 deg)
-  joint_a4: 0.1279   # rad (7.33 deg)
-  joint_a5: 1.2427   # rad (71.20 deg)
-  joint_a6: -1.7872  # rad (-102.38 deg)
+  joint_1: 0.0      # rad
+  joint_2: -0.5106  # rad (-29.24 deg)
+  joint_3: 1.8118   # rad (103.79 deg)
+  joint_4: 0.1279   # rad (7.33 deg)
+  joint_5: 1.2427   # rad (71.20 deg)
+  joint_6: -1.7872  # rad (-102.38 deg)
 
 # Home position (safe position for WAAM)
 home_position:
-  joint_a1: -0.2123  # rad (~-12.16 deg)
-  joint_a2: -0.5106
-  joint_a3: 1.8118
-  joint_a4: 0.1279
-  joint_a5: 1.2427
-  joint_a6: -1.7872
+  joint_1: -0.2123  # rad (~-12.16 deg)
+  joint_2: -0.5106
+  joint_3: 1.8118
+  joint_4: 0.1279
+  joint_5: 1.2427
+  joint_6: -1.7872
 
 # WAAM start position (above build platform)
 waam_start_position:
-  joint_a1: 0.0
-  joint_a2: -0.7854  # -45 deg
-  joint_a3: 1.5708   # 90 deg
-  joint_a4: 0.0
-  joint_a5: 0.7854   # 45 deg
-  joint_a6: 0.0
+  joint_1: 0.0
+  joint_2: -0.7854  # -45 deg
+  joint_3: 1.5708   # 90 deg
+  joint_4: 0.0
+  joint_5: 0.7854   # 45 deg
+  joint_6: 0.0
