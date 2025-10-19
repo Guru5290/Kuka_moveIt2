@@ -90,11 +90,11 @@
     <material>Gazebo/Blue</material>
   </gazebo>
   
-  <gazebo reference="$(arg prefix)contact_tip_link">
+  <!-- <gazebo reference="$(arg prefix)contact_tip_link">
     <material>Gazebo/Orange</material>
-  </gazebo>
-  
-  <gazebo reference="$(arg prefix)tcp_link">
+  </gazebo> -->
+
+  <gazebo reference="$(arg prefix)gas_nozzle_link">
     <material>Gazebo/Red</material>
   </gazebo>
   

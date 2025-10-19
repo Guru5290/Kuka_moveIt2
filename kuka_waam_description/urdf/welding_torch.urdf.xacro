@@ -35,7 +35,7 @@
       </inertial>
     </link>
     
-    <!-- Torch body -->
+    <!-- Torch body - UPDATED TO USE STL MESH -->
     <joint name="${prefix}torch_body_joint" type="fixed">
       <origin xyz="0 0 0.05" rpy="0 0 0"/>
       <parent link="${prefix}torch_mount_link"/>
@@ -43,19 +43,23 @@
     </joint>
     
     <link name="${prefix}torch_body_link">
+      <!-- Visual: Use STL mesh -->
       <visual>
-        <origin xyz="0 0 0.075" rpy="0 0 0"/>
+        <origin xyz="0 0 0.05" rpy="1.5708  3.1416  1.5708"/>
         <geometry>
-          <cylinder radius="0.025" length="0.15"/>
+          <mesh filename="package://kuka_waam_description/meshes/welding_torch/torch_body.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="blue">
           <color rgba="0.2 0.4 0.8 1.0"/>
         </material>
       </visual>
+   
       <collision>
-        <origin xyz="0 0 0.075" rpy="0 0 0"/>
+        <origin xyz="0 0 0.05" rpy="1.5708  3.1416 1.5708"/>
         <geometry>
-          <cylinder radius="0.025" length="0.15"/>
+
+          <mesh filename="package://kuka_waam_description/meshes/welding_torch/torch_body.stl" scale="0.001 0.001 0.001"/>
+
         </geometry>
       </collision>
       <inertial>
@@ -68,7 +72,7 @@
     </link>
     
     <!-- Contact tip (welding wire exit point) -->
-    <joint name="${prefix}contact_tip_joint" type="fixed">
+    <!-- <joint name="${prefix}contact_tip_joint" type="fixed">
       <origin xyz="0 0 0.15" rpy="0 0 0"/>
       <parent link="${prefix}torch_body_link"/>
       <child link="${prefix}contact_tip_link"/>
@@ -99,14 +103,12 @@
       </inertial>
     </link>
     
-    <!-- TCP (Tool Center Point) - wire stick-out point -->
     <joint name="${prefix}tcp_joint" type="fixed">
       <origin xyz="0 0 0.032" rpy="0 0 0"/>
       <parent link="${prefix}contact_tip_link"/>
       <child link="${prefix}tcp_link"/>
-    </joint>
-    
-    <!-- FIX: Added collision geometry to tcp_link -->
+    </joint> -->
+<!--     
     <link name="${prefix}tcp_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -130,29 +132,34 @@
                  iyy="0.000001" iyz="0"
                  izz="0.000001"/>
       </inertial>
-    </link>
+    </link> -->
     
-    <!-- Gas nozzle -->
+    <!-- Gas nozzle - UPDATED TO USE STL MESH -->
     <joint name="${prefix}gas_nozzle_joint" type="fixed">
-      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <parent link="${prefix}torch_body_link"/>
       <child link="${prefix}gas_nozzle_link"/>
     </joint>
     
     <link name="${prefix}gas_nozzle_link">
+      <!-- Visual: Use STL mesh -->
       <visual>
-        <origin xyz="0 0 0.11" rpy="0 0 0"/>
+        <origin xyz="0 0 0.05" rpy="1.5708  3.1416  1.5708"/>
         <geometry>
-          <cylinder radius="0.035" length="0.08"/>
+          <mesh filename="package://kuka_waam_description/meshes/welding_torch/nozzle.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="light_grey">
           <color rgba="0.7 0.7 0.7 0.5"/>
         </material>
       </visual>
+    
       <collision>
-        <origin xyz="0 0 0.11" rpy="0 0 0"/>
+        <origin xyz="0 0 0.05" rpy="1.5708  3.1416  1.5708"/>
         <geometry>
-          <cylinder radius="0.035" length="0.08"/>
+
+          <mesh filename="package://kuka_waam_description/meshes/welding_torch/nozzle.stl" scale="0.001 0.001 0.001"/>
+          
+    
         </geometry>
       </collision>
       <inertial>

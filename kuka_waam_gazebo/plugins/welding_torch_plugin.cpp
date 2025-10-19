@@ -35,14 +35,14 @@ namespace gazebo
           this->arc_topic = "/welding_state";
         }
         
-        if (_sdf->HasElement("tcp_link"))
+        if (_sdf->HasElement("gas_nozzle_link"))
         {
-          std::string tcp_link_name = _sdf->Get<std::string>("tcp_link");
-          this->tcp_link = this->model->GetLink(tcp_link_name);
-          if (!this->tcp_link)
+          std::string gas_nozzle_link_name = _sdf->Get<std::string>("gas_nozzle_link");
+          this->gas_nozzle_link = this->model->GetLink(gas_nozzle_link_name);
+          if (!this->gas_nozzle_link)
           {
             RCLCPP_ERROR(this->ros_node_->get_logger(), 
-                        "TCP link [%s] not found!", tcp_link_name.c_str());
+                        "TCP link [%s] not found!", gas_nozzle_link_name.c_str());
             return;
           }
         }
@@ -104,13 +104,13 @@ namespace gazebo
 
       void OnUpdate()
       {
-        if (!this->tcp_link || !this->welding_active)
+        if (!this->gas_nozzle_link || !this->welding_active)
         {
           return;
         }
         
         // Get TCP position in world frame
-        ignition::math::Pose3d tcp_pose = this->tcp_link->WorldPose();
+        ignition::math::Pose3d tcp_pose = this->gas_nozzle_link->WorldPose();
         ignition::math::Vector3d tcp_position = tcp_pose.Pos();
         
         // Publish heat point for visualization
@@ -138,7 +138,7 @@ namespace gazebo
       // Gazebo pointers
       physics::ModelPtr model;
       physics::WorldPtr world;
-      physics::LinkPtr tcp_link;
+      physics::LinkPtr gas_nozzle_link;
       event::ConnectionPtr update_connection;
       
       // ROS interface

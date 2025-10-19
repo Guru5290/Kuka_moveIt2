@@ -24,9 +24,9 @@
     <!-- Torch components -->
     <disable_collisions link1="flange" link2="torch_mount_link" reason="Adjacent"/>
     <disable_collisions link1="torch_mount_link" link2="torch_body_link" reason="Adjacent"/>
-    <disable_collisions link1="torch_body_link" link2="contact_tip_link" reason="Adjacent"/>
+    <!-- <disable_collisions link1="torch_body_link" link2="contact_tip_link" reason="Adjacent"/> -->
     <disable_collisions link1="torch_body_link" link2="gas_nozzle_link" reason="Adjacent"/>
-    <disable_collisions link1="contact_tip_link" link2="tcp_link" reason="Adjacent"/>
+    <!-- <disable_collisions link1="contact_tip_link" link2="tcp_link" reason="Adjacent"/> -->
     
     <!-- Non-adjacent links that never collide -->
     <disable_collisions link1="base_link" link2="link_3" reason="Never"/>
