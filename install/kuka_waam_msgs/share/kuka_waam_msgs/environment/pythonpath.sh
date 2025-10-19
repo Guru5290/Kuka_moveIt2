@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/ament_cmake_environment_hooks/pythonpath.sh

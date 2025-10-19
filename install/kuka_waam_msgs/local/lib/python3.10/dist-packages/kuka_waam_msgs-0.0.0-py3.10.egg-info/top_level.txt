@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/ament_cmake_python/kuka_waam_msgs/kuka_waam_msgs.egg-info/top_level.txt

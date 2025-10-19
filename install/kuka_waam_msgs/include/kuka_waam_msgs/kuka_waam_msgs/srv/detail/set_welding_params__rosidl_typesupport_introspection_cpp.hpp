@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/rosidl_typesupport_introspection_cpp/kuka_waam_msgs/srv/detail/set_welding_params__rosidl_typesupport_introspection_cpp.hpp

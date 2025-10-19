@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/kuka_waam_moveit_config/launch/moveit_rviz.launch.py

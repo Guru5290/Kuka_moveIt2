@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/rosidl_cmake/srv/SetWeldingParams_Request.msg

@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/kuka_waam_msgs/msg/LayerInfo.msg

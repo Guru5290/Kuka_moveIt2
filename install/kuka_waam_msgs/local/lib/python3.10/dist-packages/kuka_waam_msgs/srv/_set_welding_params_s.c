@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/rosidl_generator_py/kuka_waam_msgs/srv/_set_welding_params_s.c

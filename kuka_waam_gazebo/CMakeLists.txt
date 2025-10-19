@@ -14,7 +14,7 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
 # Add subdirectory for plugins
-add_subdirectory(plugins)
+# add_subdirectory(plugins)
 
 # Install directories
 install(DIRECTORY

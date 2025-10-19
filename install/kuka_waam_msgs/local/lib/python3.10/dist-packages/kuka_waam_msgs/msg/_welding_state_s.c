@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/rosidl_generator_py/kuka_waam_msgs/msg/_welding_state_s.c

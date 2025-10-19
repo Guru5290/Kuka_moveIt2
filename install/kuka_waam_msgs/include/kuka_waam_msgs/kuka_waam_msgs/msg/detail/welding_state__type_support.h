@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/kuka_waam_msgs/rosidl_generator_c/kuka_waam_msgs/msg/detail/welding_state__type_support.h
