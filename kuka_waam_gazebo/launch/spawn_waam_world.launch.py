@@ -13,7 +13,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             'world_file',
-            default_value='waam_cell.world',
+            default_value='waam_cell.sdf',
             description='World file name'
         )
     )

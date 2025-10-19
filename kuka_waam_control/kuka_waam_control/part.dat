@@ -1,0 +1,22 @@
+;FOLD EXTERNAL DECLARATIONS
+;ENDFOLD (EXTERNAL DECLARATIONS)
+
+;FOLD DECLARATION
+DECL E6POS XHOME
+DECL REAL Global_Speed
+DECL REAL Weld_Speed
+DECL REAL Travel_Speed
+DECL REAL Layer_Height
+DECL REAL Arc_Strike_Delay
+DECL REAL Arc_Crater_Fill
+;ENDFOLD (DECLARATION)
+
+;FOLD INITIALIZATION
+XHOME = {X 0.0, Y 0.0, Z 600.0, A 180.0, B 0.0, C 90.0}
+Global_Speed = 0.5       ; m/s
+Weld_Speed = 0.008       ; m/s (8 mm/s typical for WAAM)
+Travel_Speed = 0.5       ; m/s
+Layer_Height = 2.0       ; mm
+Arc_Strike_Delay = 0.2   ; seconds
+Arc_Crater_Fill = 0.15   ; seconds
+;ENDFOLD (INITIALIZATION)

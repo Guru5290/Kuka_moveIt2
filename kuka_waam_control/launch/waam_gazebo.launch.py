@@ -14,7 +14,7 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='kr6_r900_sixx')
     use_rviz = LaunchConfiguration('use_rviz', default='true')
     use_moveit = LaunchConfiguration('use_moveit', default='true')
-    world_file = LaunchConfiguration('world_file', default='waam_cell.world')
+    world_file = LaunchConfiguration('world_file', default='waam_cell.sdf')
     
     declared_arguments = [
         DeclareLaunchArgument(
@@ -34,7 +34,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'world_file',
-            default_value='waam_cell.world',
+            default_value='waam_cell.sdf',
             description='Gazebo world file'
         ),
     ]
