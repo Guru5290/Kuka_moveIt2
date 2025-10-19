@@ -4,6 +4,7 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Comm
 from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterValue  # ADDED for FIX
 import yaml
 
 
@@ -16,6 +17,7 @@ def load_yaml(package_name, file_path):
         with open(absolute_file_path.perform(None), 'r') as file:
             return yaml.safe_load(file)
     except Exception as e:
+        print(f"Error loading {file_path}: {e}")
         return {}
 
 
@@ -39,7 +41,10 @@ def launch_setup(context, *args, **kwargs):
         ' mode:=mock' if use_sim == 'true' else ' mode:=hardware'
     ])
     
-    robot_description = {'robot_description': robot_description_content.perform(context)}
+    # FIX: Use ParameterValue wrapper for robot_description
+    robot_description = {
+        'robot_description': ParameterValue(robot_description_content, value_type=str)
+    }
     
     # SRDF
     robot_description_semantic_content = Command([
@@ -55,20 +60,27 @@ def launch_setup(context, *args, **kwargs):
         'robot_description_semantic': robot_description_semantic_content.perform(context)
     }
     
-    # Kinematics
+    # Kinematics - FIX: Better error handling
     kinematics_yaml = load_yaml(
         'kuka_waam_moveit_config',
         'config/kinematics.yaml'
     )
+    
+    if not kinematics_yaml:
+        print("WARNING: kinematics.yaml is empty or not found!")
+    
     robot_description_kinematics = {
         'robot_description_kinematics': kinematics_yaml
     }
     
-    # Planning
+    # Planning - FIX: Load with proper structure
     ompl_planning_yaml = load_yaml(
         'kuka_waam_moveit_config',
         'config/ompl_planning.yaml'
     )
+    
+    if not ompl_planning_yaml:
+        print("WARNING: ompl_planning.yaml is empty or not found!")
     
     # Joint limits
     joint_limits_yaml = load_yaml(
@@ -95,12 +107,15 @@ def launch_setup(context, *args, **kwargs):
         'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager'
     }
     
-    # Planning pipeline
+    # Planning pipeline - FIX: Ensure planning_plugin is loaded from ompl_planning_yaml
     planning_pipelines = {
         'planning_pipelines': ['ompl'],
         'default_planning_pipeline': 'ompl',
-        'ompl': ompl_planning_yaml
     }
+    
+    # Add OMPL configuration directly
+    if ompl_planning_yaml:
+        planning_pipelines.update(ompl_planning_yaml)
     
     # Trajectory execution
     trajectory_execution = {
