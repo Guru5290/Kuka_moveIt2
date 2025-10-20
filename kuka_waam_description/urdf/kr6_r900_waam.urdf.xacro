@@ -1,101 +1,56 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="kr6_r900_waam">
-  
-  <!-- Include base robot macro -->
-  <xacro:include filename="$(find kuka_agilus_support)/urdf/kr6_r900_sixx_macro.xacro"/>
-  
-  <!-- Include welding torch -->
-  <xacro:include filename="$(find kuka_waam_description)/urdf/welding_torch.urdf.xacro"/>
-  
-  <!-- Parameters -->
-  <xacro:arg name="prefix" default=""/>
-  <xacro:arg name="mode" default="mock"/>
-  <xacro:arg name="use_fake_hardware" default="true"/>
-  
-  <!-- Instantiate robot -->
-  <xacro:kuka_kr6_r900_sixx_robot 
-    prefix="$(arg prefix)" 
-    package_name="kuka_agilus_support">
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </xacro:kuka_kr6_r900_sixx_robot>
-  
-  <!-- Attach welding torch to flange -->
-  <xacro:welding_torch prefix="$(arg prefix)" parent_link="$(arg prefix)flange">
-    <origin xyz="0 0 0" rpy="0 1.57 0"/>
-  </xacro:welding_torch>
-  
-  <!-- ADD THIS: ros2_control configuration -->
-  <ros2_control name="kuka_waam_system" type="system">
-    <hardware>
-      <xacro:if value="$(arg use_fake_hardware)">
-        <plugin>mock_components/GenericSystem</plugin>
-      </xacro:if>
-      <xacro:unless value="$(arg use_fake_hardware)">
-        <plugin>kuka_rsi_hardware_interface/KukaRSIHardwareInterface</plugin>
-      </xacro:unless>
-    </hardware>
+    <!-- Include base robot macro -->
+    <xacro:include filename="$(find kuka_agilus_support)/urdf/kr6_r900_sixx_macro.xacro"/>
     
-    <!-- Joint 1 -->
-    <joint name="$(arg prefix)joint_1">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
+    <!-- Include ros2_control macro -->
+    <xacro:include filename="$(find kuka_agilus_support)/urdf/kr_agilus_ros2_control_macro.xacro"/>
     
-    <!-- Joint 2 -->
-    <joint name="$(arg prefix)joint_2">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
+    <!-- Include welding torch -->
+    <xacro:include filename="$(find kuka_waam_description)/urdf/welding_torch.urdf.xacro"/>
     
-    <!-- Joint 3 -->
-    <joint name="$(arg prefix)joint_3">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
+    <!-- Parameters -->
+    <xacro:arg name="prefix" default=""/>
+    <xacro:arg name="mode" default="gazebo"/>
+    <xacro:arg name="use_fake_hardware" default="true"/>
+    <xacro:arg name="use_gpio" default="false"/>
     
-    <!-- Joint 4 -->
-    <joint name="$(arg prefix)joint_4">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
+    <!-- Instantiate robot -->
+    <xacro:kuka_kr6_r900_sixx_robot
+        prefix="$(arg prefix)"
+        package_name="kuka_agilus_support">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:kuka_kr6_r900_sixx_robot>
     
-    <!-- Joint 5 -->
-    <joint name="$(arg prefix)joint_5">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
+    <!-- Attach welding torch to flange -->
+    <xacro:welding_torch prefix="$(arg prefix)" parent_link="$(arg prefix)flange">
+        <origin xyz="0 0 0" rpy="0 1.57 0"/>
+    </xacro:welding_torch>
     
-    <!-- Joint 6 -->
-    <joint name="$(arg prefix)joint_6">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-  </ros2_control>
-  
-  <!-- Gazebo plugins -->
-  <gazebo>
-    <plugin filename="libign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-      <parameters>$(find kuka_waam_description)/config/ros2_controllers.yaml</parameters>
-    </plugin>
-  </gazebo>
-  
-  <!-- Welding torch Gazebo properties -->
-  <gazebo reference="$(arg prefix)torch_body_link">
-    <material>Gazebo/Blue</material>
-  </gazebo>
-  
-  <!-- <gazebo reference="$(arg prefix)contact_tip_link">
-    <material>Gazebo/Orange</material>
-  </gazebo> -->
-
-  <gazebo reference="$(arg prefix)gas_nozzle_link">
-    <material>Gazebo/Red</material>
-  </gazebo>
-  
+    <!-- Use the existing ros2_control macro from kuka_agilus_support -->
+    <xacro:kuka_agilus_ros2_control 
+        name="kuka_waam_system"
+        driver_version="eki_rsi"
+        client_ip="192.168.1.100"
+        client_port="49152"
+        controller_ip="192.168.1.1"
+        prefix="$(arg prefix)"
+        mode="$(arg mode)"
+        use_gpio="$(arg use_gpio)"
+        roundtrip_time="4000"
+        verify_robot_model="true"
+    />
+    
+    <!-- Welding torch Gazebo properties -->
+    <gazebo reference="$(arg prefix)torch_body_link">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+    
+    <!-- <gazebo reference="$(arg prefix)contact_tip_link">
+        <material>Gazebo/Orange</material>
+    </gazebo> -->
+    
+    <gazebo reference="$(arg prefix)gas_nozzle_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
 </robot>

@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import IfCondition, UnlessCondition
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -8,8 +8,6 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-   
-    
     # Declare arguments
     robot_model = LaunchConfiguration('robot_model', default='kr6_r900_sixx')
     use_rviz = LaunchConfiguration('use_rviz', default='true')
@@ -60,7 +58,7 @@ def generate_launch_description():
         }.items()
     )
     
-    # Launch MoveIt
+    # Launch MoveIt (without base nodes - Gazebo handles them)
     moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -72,6 +70,7 @@ def generate_launch_description():
         launch_arguments={
             'robot_model': robot_model,
             'use_sim': 'true',
+            'load_base_nodes': 'false',  # CRITICAL: Gazebo handles robot_state_publisher, ros2_control, and controllers
         }.items(),
         condition=IfCondition(use_moveit)
     )
@@ -91,23 +90,10 @@ def generate_launch_description():
         condition=IfCondition(use_rviz)
     )
     
-    # WAAM State Machine
-    waam_state_machine = Node(
-        package='kuka_waam_control',
-        executable='waam_state_machine.py',
-        name='waam_state_machine',
-        parameters=[{
-            'execution_mode': 'simulation',
-            'enable_welding': True,
-        }],
-        output='screen'
-    )
-    
     return LaunchDescription(
         declared_arguments + [
             gazebo_launch,
             moveit_launch,
-            rviz_node,
-            waam_state_machine,
+            rviz_node
         ]
     )

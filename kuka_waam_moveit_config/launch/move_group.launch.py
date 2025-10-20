@@ -4,18 +4,24 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Comm
 from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.parameter_descriptions import ParameterValue  # ADDED for FIX
+from launch_ros.parameter_descriptions import ParameterValue
 import yaml
 
 
 def load_yaml(package_name, file_path):
     """Load yaml file"""
-    package_path = FindPackageShare(package_name).find(package_name)
-    absolute_file_path = PathJoinSubstitution([package_path, file_path])
+    from ament_index_python.packages import get_package_share_directory
+    import os
+    
+    package_path = get_package_share_directory(package_name)
+    absolute_file_path = os.path.join(package_path, file_path)
     
     try:
-        with open(absolute_file_path.perform(None), 'r') as file:
+        with open(absolute_file_path, 'r') as file:
             return yaml.safe_load(file)
+    except FileNotFoundError:
+        print(f"WARNING: {file_path} not found in {package_name}!")
+        return {}
     except Exception as e:
         print(f"Error loading {file_path}: {e}")
         return {}
@@ -27,6 +33,7 @@ def launch_setup(context, *args, **kwargs):
     # Parameters
     robot_model = LaunchConfiguration('robot_model').perform(context)
     use_sim = LaunchConfiguration('use_sim').perform(context)
+    load_base_nodes = LaunchConfiguration('load_base_nodes').perform(context)
     
     # Robot description
     robot_description_content = Command([
@@ -41,7 +48,6 @@ def launch_setup(context, *args, **kwargs):
         ' mode:=mock' if use_sim == 'true' else ' mode:=hardware'
     ])
     
-    # FIX: Use ParameterValue wrapper for robot_description
     robot_description = {
         'robot_description': ParameterValue(robot_description_content, value_type=str)
     }
@@ -60,7 +66,7 @@ def launch_setup(context, *args, **kwargs):
         'robot_description_semantic': robot_description_semantic_content.perform(context)
     }
     
-    # Kinematics - FIX: Better error handling
+    # Kinematics
     kinematics_yaml = load_yaml(
         'kuka_waam_moveit_config',
         'config/kinematics.yaml'
@@ -73,7 +79,7 @@ def launch_setup(context, *args, **kwargs):
         'robot_description_kinematics': kinematics_yaml
     }
     
-    # Planning - FIX: Load with proper structure
+    # Planning
     ompl_planning_yaml = load_yaml(
         'kuka_waam_moveit_config',
         'config/ompl_planning.yaml'
@@ -107,13 +113,12 @@ def launch_setup(context, *args, **kwargs):
         'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager'
     }
     
-    # Planning pipeline - FIX: Ensure planning_plugin is loaded from ompl_planning_yaml
+    # Planning pipeline
     planning_pipelines = {
         'planning_pipelines': ['ompl'],
         'default_planning_pipeline': 'ompl',
     }
     
-    # Add OMPL configuration directly
     if ompl_planning_yaml:
         planning_pipelines.update(ompl_planning_yaml)
     
@@ -142,7 +147,7 @@ def launch_setup(context, *args, **kwargs):
         }
     }
     
-    # Move group node
+    # Move group node (ALWAYS launched)
     move_group_node = Node(
         package='moveit_ros_move_group',
         executable='move_group',
@@ -164,64 +169,76 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
     
-    # Robot state publisher
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='screen',
-        parameters=[
-            robot_description,
-            {'use_sim_time': use_sim == 'true'}
+    # Base nodes - ONLY loaded when NOT using Gazebo
+    # (i.e., when using fake hardware or real hardware standalone)
+    base_nodes = []
+    
+    if load_base_nodes == 'true':
+        print("INFO: Loading robot_state_publisher, ros2_control_node, and controllers")
+        
+        # Robot state publisher
+        robot_state_publisher = Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[
+                robot_description,
+                {'use_sim_time': use_sim == 'true'}
+            ]
+        )
+        
+        # ROS2 Control Node
+        ros2_control_node = Node(
+            package='controller_manager',
+            executable='ros2_control_node',
+            parameters=[
+                robot_description,
+                PathJoinSubstitution([
+                    FindPackageShare('kuka_waam_description'),
+                    'config',
+                    'ros2_controllers.yaml'
+                ]),
+                {'use_sim_time': use_sim == 'true'}
+            ],
+            output='screen',
+        )
+        
+        # Joint state broadcaster spawner
+        joint_state_broadcaster_spawner = Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=[
+                'joint_state_broadcaster',
+                '--controller-manager',
+                '/controller_manager'
+            ],
+        )
+        
+        # Joint trajectory controller spawner
+        joint_trajectory_controller_spawner = Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=[
+                'joint_trajectory_controller',
+                '--controller-manager',
+                '/controller_manager'
+            ],
+        )
+        
+        base_nodes = [
+            robot_state_publisher,
+            ros2_control_node,
+            joint_state_broadcaster_spawner,
+            joint_trajectory_controller_spawner,
         ]
-    )
-    
-    # ROS2 Control Node
-    ros2_control_node = Node(
-        package='controller_manager',
-        executable='ros2_control_node',
-        parameters=[
-            robot_description,
-            PathJoinSubstitution([
-                FindPackageShare('kuka_waam_description'),
-                'config',
-                'ros2_controllers.yaml'
-            ]),
-            {'use_sim_time': use_sim == 'true'}
-        ],
-        output='screen',
-        condition=IfCondition(use_sim)
-    )
-    
-    # Joint state broadcaster spawner
-    joint_state_broadcaster_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=[
-            'joint_state_broadcaster',
-            '--controller-manager',
-            '/controller_manager'
-        ],
-    )
-    
-    # Joint trajectory controller spawner
-    joint_trajectory_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=[
-            'joint_trajectory_controller',
-            '--controller-manager',
-            '/controller_manager'
-        ],
-    )
+    else:
+        print("INFO: Skipping base nodes (robot_state_publisher, ros2_control, controllers)")
+        print("INFO: Assuming they are launched by Gazebo or external launch file")
     
     nodes_to_start = [
-        robot_state_publisher,
         move_group_node,
-        ros2_control_node,
-        joint_state_broadcaster_spawner,
-        joint_trajectory_controller_spawner,
-    ]
+    ] + base_nodes
     
     return nodes_to_start
 
@@ -241,7 +258,14 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'use_sim',
             default_value='true',
-            description='Use simulation'
+            description='Use simulation time'
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'load_base_nodes',
+            default_value='false',
+            description='Load robot_state_publisher, ros2_control_node, and controllers. Set to false when using Gazebo.'
         )
     )
     

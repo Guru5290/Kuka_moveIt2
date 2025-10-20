@@ -9,6 +9,7 @@
       <real_time_update_rate>1000</real_time_update_rate>
     </physics>
     
+    <!-- Required Plugins -->
     <plugin
       filename="libignition-gazebo-physics-system.so"
       name="ignition::gazebo::systems::Physics">
@@ -21,6 +22,72 @@
       filename="libignition-gazebo-scene-broadcaster-system.so"
       name="ignition::gazebo::systems::SceneBroadcaster">
     </plugin>
+    <plugin
+      filename="libignition-gazebo-contact-system.so"
+      name="ignition::gazebo::systems::Contact">
+    </plugin>
+    
+    <!-- GUI Configuration -->
+    <gui fullscreen="0">
+      <!-- 3D scene -->
+      <plugin filename="libignition-gazebo-scene3d-system.so" name="ignition::gazebo::systems::Scene3D">
+        <ignition-gui>
+          <title>3D View</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </ignition-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+        <camera_pose>-3 -3 2 0 0.3 0.785</camera_pose>
+      </plugin>
+      
+      <!-- World control -->
+      <plugin filename="libignition-gazebo-world-control-system.so" name="ignition::gazebo::systems::WorldControl">
+        <ignition-gui>
+          <title>World control</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">72</property>
+          <property type="double" key="width">121</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="left" target="left"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </ignition-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+      </plugin>
+      
+      <!-- World statistics -->
+      <plugin filename="libignition-gazebo-world-stats-system.so" name="ignition::gazebo::systems::WorldStats">
+        <ignition-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </ignition-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      
+      <!-- Entity tree -->
+      <plugin filename="libignition-gazebo-entity-tree-system.so" name="ignition::gazebo::systems::EntityTree">
+      </plugin>
+    </gui>
     
     <!-- Sun -->
     <light type="directional" name="sun">
@@ -48,6 +115,14 @@
               <size>20 20</size>
             </plane>
           </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
         </collision>
         <visual name="visual">
           <geometry>
@@ -68,19 +143,19 @@
     <!-- Workbench / Build Platform -->
     <model name="workbench">
       <static>true</static>
-      <pose>0.6 0 0.4 0 0 0</pose>
+      <pose>0.6 0 0.3 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
             <box>
-              <size>0.8 0.8 0.8</size>
+              <size>0.8 0.8 0.6</size>
             </box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
             <box>
-              <size>0.8 0.8 0.8</size>
+              <size>0.8 0.8 0.6</size>
             </box>
           </geometry>
           <material>
@@ -95,7 +170,7 @@
     <!-- Build Platform Top (Steel Plate) -->
     <model name="build_plate">
       <static>true</static>
-      <pose>0.6 0 0.805 0 0 0</pose>
+      <pose>0.6 0 0.605 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
@@ -103,6 +178,14 @@
               <size>0.6 0.6 0.01</size>
             </box>
           </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0.8</mu>
+                <mu2>0.8</mu2>
+              </ode>
+            </friction>
+          </surface>
         </collision>
         <visual name="visual">
           <geometry>
@@ -119,11 +202,18 @@
       </link>
     </model>
     
-    <!-- Safety Fence -->
+    <!-- Safety Fence - Front -->
     <model name="fence_front">
       <static>true</static>
       <pose>1.5 0 0.75 0 0 0</pose>
       <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.05 3 1.5</size>
+            </box>
+          </geometry>
+        </collision>
         <visual name="visual">
           <geometry>
             <box>
@@ -133,6 +223,61 @@
           <material>
             <ambient>1 0.5 0 0.3</ambient>
             <diffuse>1 0.5 0 0.3</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Safety Fence - Left Side -->
+    <model name="fence_left">
+      <static>true</static>
+      <pose>0 -1.5 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>3 0.05 1.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>3 0.05 1.5</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.5 0 0.3</ambient>
+            <diffuse>1 0.5 0 0.3</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Safety Fence - Right Side -->
+    <model name="fence_right">
+      <static>true</static>
+      <pose>0 1.5 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>3 0.05 1.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>3 0.05 1.5</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.5 0 0.3</ambient>
+            <diffuse>1 0.5 0 0.3</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
       </link>
