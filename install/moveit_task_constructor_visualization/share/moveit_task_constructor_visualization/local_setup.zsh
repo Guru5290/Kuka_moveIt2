@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/moveit_task_constructor_visualization/ament_cmake_environment_hooks/local_setup.zsh

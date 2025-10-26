@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_kinematics/lma_kinematics_plugin/include/moveit/lma_kinematics_plugin/lma_kinematics_plugin.h

@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_setup_assistant/moveit_setup_srdf_plugins/include/moveit_setup_srdf_plugins/group_edit_widget.hpp

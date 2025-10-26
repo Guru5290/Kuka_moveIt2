@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/moveit_ros_occupancy_map_monitor/ament_cmake_environment_hooks/local_setup.sh

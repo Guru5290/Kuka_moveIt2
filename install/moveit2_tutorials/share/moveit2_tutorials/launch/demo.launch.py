@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2_tutorials/doc/tutorials/quickstart_in_rviz/launch/demo.launch.py

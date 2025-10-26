@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_ros/robot_interaction/include/moveit/robot_interaction/interaction.h

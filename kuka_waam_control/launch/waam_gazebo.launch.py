@@ -9,7 +9,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     # Declare arguments
-    robot_model = LaunchConfiguration('robot_model', default='kr6_r900_sixx')
+    robot_model = LaunchConfiguration('robot_model', default='kr6_r900_waam')
     use_rviz = LaunchConfiguration('use_rviz', default='true')
     use_moveit = LaunchConfiguration('use_moveit', default='true')
     world_file = LaunchConfiguration('world_file', default='waam_cell.sdf')
@@ -17,7 +17,7 @@ def generate_launch_description():
     declared_arguments = [
         DeclareLaunchArgument(
             'robot_model',
-            default_value='kr6_r900_sixx',
+            default_value='kr6_r900_waam',
             description='Robot model to use'
         ),
         DeclareLaunchArgument(
@@ -48,7 +48,10 @@ def generate_launch_description():
         ]),
         launch_arguments={
             'robot_model': robot_model,
-            'robot_family_support': 'kuka_agilus_support',
+            # Use the kuka_waam_description package so the WAAM URDF (with torch)
+            # is the one xacro'd for Gazebo. This makes Gazebo and MoveIt use
+            # the same robot_description.
+            'robot_family_support': 'kuka_waam_description',
             'gz_world': PathJoinSubstitution([
                 FindPackageShare('kuka_waam_gazebo'),
                 'worlds',
@@ -89,7 +92,18 @@ def generate_launch_description():
         arguments=['-d', rviz_config],
         condition=IfCondition(use_rviz)
     )
-    
+
+    waam_state_machine = Node(
+        package='kuka_waam_control',
+        executable='waam_state_machine.py',
+        name='waam_state_machine',
+        parameters=[{
+            'execution_mode': 'simulation',
+            'enable_welding': True,
+        }],
+        output='screen'
+    )
+
     return LaunchDescription(
         declared_arguments + [
             gazebo_launch,

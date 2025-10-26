@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/chomp_motion_planner/ament_cmake_environment_hooks/local_setup.sh

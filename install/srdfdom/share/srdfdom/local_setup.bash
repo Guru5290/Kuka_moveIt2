@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/srdfdom/ament_cmake_environment_hooks/local_setup.bash

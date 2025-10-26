@@ -1,0 +1,64 @@
+DEF test()
+;FOLD INI
+  ;FOLD BASISTECH INI
+
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+BASE_DATA[8] = {FRAME: X 168.4, Y -507.55, Z 688.59, A 179.6, B -1.15, C 0.29}
+TOOL_DATA[4] = {FRAME: X -17.74, Y -37.22, Z 294.62, A 0, B 0, C 0}
+$BASE = BASE_DATA[8]  ; Activate the base frame
+
+$TOOL = TOOL_DATA[4]  ; Activate the tool definition
+
+; Initialize motion parameters
+BAS (#VEL_PTP,100)  ; Set PTP velocity
+BAS (#ACC_PTP,100)  ; Set PTP acceleration
+BAS (#VEL_CP,0.01)   ; Set cartesian velocity
+BAS (#ACC_CP,0.01)   ; Set cartesian acceleration
+
+; Set blending parameters
+$APO.CDIS = 0.5     ; Set blending distance for smooth motion
+
+; Default velocities
+$VEL.CP = 0.030  ; Travel speed (m/s)
+
+; Move to safe start position
+PTP HOME
+
+; Initialize welding system
+$OUT[1] = FALSE  ; Welding torch OFF for the time being
+WAIT SEC 0.5  ; System stabilization
+
+
+; Adjust speed to 8.0 mm/s
+$VEL.CP = 0.0080
+PTP {X 0.000, Y 0.000, Z 50.000, A 129.7, B -46.5, C 162.4} 
+PTP {X 0.000, Y 0.000, Z 10.000, A 129.7, B -46.5, C 162.4} 
+
+; Adjust speed to 10.0 mm/s
+$VEL.CP = 0.0100
+LIN {X 100.000, Y 0.000, Z 5.000, A 129.7, B -46.5, C 162.4}
+LIN {X 100.000, Y 100.000, Z 5.000, A 129.7, B -46.5, C 162.4}
+LIN {X 0.000, Y 100.000, Z 5.000, A 129.7, B -46.5, C 162.4}
+LIN {X 0.000, Y 0.000, Z 5.000, A 129.7, B -46.5, C 162.4}
+PTP {X 0.000, Y 0.000, Z 50.000, A 129.7, B -46.5, C 162.4} 
+
+
+; Program End 
+
+
+; Ensure welding is off
+$OUT[1] = FALSE  ; Welding torch OFF
+WAIT SEC 0.5
+
+; Return to home position safely
+$VEL.CP = 0.030  ; Reset to travel speed
+
+PTP HOME
+
+END

@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2_tutorials/doc/examples/planning_scene_ros_api/launch/planning_scene_ros_api_tutorial.launch.py

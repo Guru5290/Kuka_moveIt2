@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/moveit_setup_srdf_plugins/ament_cmake_core/moveit_setup_srdf_pluginsConfig.cmake

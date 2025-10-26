@@ -1,0 +1,4 @@
+ DEFDAT  WAAM_Test_2025_10_23_1_10Layer_Single_Line PUBLIC
+; Home position 
+DECL E6POS HOME={X -183.3,Y -17.4,Z 38.3,A 129.7,B -46.5,C 162.4,S 18,T 34}
+ENDDAT

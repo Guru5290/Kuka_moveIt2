@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/moveit_simple_controller_manager/ament_cmake_core/moveit_simple_controller_managerConfig.cmake

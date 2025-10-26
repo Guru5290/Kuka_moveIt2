@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/rosparam_shortcuts/ament_cmake_core/rosparam_shortcutsConfig.cmake

@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/srdfdom/srdfdom/__init__.py

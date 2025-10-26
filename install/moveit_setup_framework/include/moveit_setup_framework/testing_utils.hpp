@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_setup_assistant/moveit_setup_framework/include/moveit_setup_framework/testing_utils.hpp

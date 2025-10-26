@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_kinematics/test/launch/panda-kdl-singular.test.py

@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/moveit_resources_prbt_ikfast_manipulator_plugin/ament_cmake_environment_hooks/local_setup.bash

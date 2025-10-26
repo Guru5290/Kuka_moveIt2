@@ -60,7 +60,7 @@ HEADER_SRC = """DEF gcode_waam()
 ; ************
 
 ; Move to home position
-PTP {A1 -12.16, A2 -29.24, A3 103.79, A4 7.33, A5 71.20, A6 -102.38}
+PTP HOME
 
 ; Initialize system variables
 $POS_ACT_MES = $POS_ACT
@@ -109,7 +109,7 @@ HEADER_DAT = """;FOLD EXTERNAL DECLARATIONS
 ;ENDFOLD (EXTERNAL DECLARATIONS)
 
 ;FOLD DECLARATION
-DECL E6POS XHOME
+DECL E6POS HOME
 DECL REAL Global_Speed
 DECL REAL Weld_Speed
 DECL REAL Travel_Speed
@@ -119,7 +119,7 @@ DECL REAL Arc_Crater_Fill
 ;ENDFOLD (DECLARATION)
 
 ;FOLD INITIALIZATION
-XHOME = {X 0.0, Y 0.0, Z 600.0, A 180.0, B 0.0, C 90.0}
+HOME = {X 0.0, Y 0.0, Z 600.0, A 180.0, B 0.0, C 90.0}
 Global_Speed = 0.5       ; m/s
 Weld_Speed = 0.008       ; m/s (8 mm/s typical for WAAM)
 Travel_Speed = 0.5       ; m/s
@@ -146,7 +146,7 @@ safe_pos.Z = safe_pos.Z + 100.0
 LIN safe_pos C_DIS
 
 ; Return to home
-PTP XHOME
+PTP HOME
 
 ; Final status message
 MsgNotify("WAAM Job Completed Successfully!")

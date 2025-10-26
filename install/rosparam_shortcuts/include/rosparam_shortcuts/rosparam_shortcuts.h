@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/rosparam_shortcuts/include/rosparam_shortcuts/rosparam_shortcuts.h

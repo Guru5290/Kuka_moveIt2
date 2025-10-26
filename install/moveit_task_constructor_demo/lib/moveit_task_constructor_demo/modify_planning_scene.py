@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit_task_constructor/demo/scripts/modify_planning_scene.py

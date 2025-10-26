@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_planners/chomp/chomp_motion_planner/include/chomp_motion_planner/chomp_planner.h

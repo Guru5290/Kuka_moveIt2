@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/rosparam_shortcuts/ament_cmake_environment_hooks/local_setup.bash

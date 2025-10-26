@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/moveit_task_constructor_msgs/rosidl_generator_c/moveit_task_constructor_msgs/msg/detail/solution__struct.h

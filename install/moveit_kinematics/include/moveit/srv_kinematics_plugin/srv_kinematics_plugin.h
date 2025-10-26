@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2/moveit_kinematics/srv_kinematics_plugin/include/moveit/srv_kinematics_plugin/srv_kinematics_plugin.h

@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2_tutorials/doc/examples/planning_scene/launch/planning_scene_tutorial.launch.py

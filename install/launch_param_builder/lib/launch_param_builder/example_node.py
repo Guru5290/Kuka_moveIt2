@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/build/launch_param_builder/example/example_node.py

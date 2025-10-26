@@ -1,0 +1,503 @@
+DEF LAYERS10()
+;FOLD INI
+  ;FOLD BASISTECH INI
+    BAS (#INITMOV,0)
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;WAAM-optimized initialization
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+
+BASE_DATA[8] = {FRAME: X 168.4, Y -507.55, Z 688.59, A 179.6, B -1.15, C 0.29}
+TOOL_DATA[4] = {FRAME: X -17.74, Y -37.22, Z 294.62, A 0, B 0, C 0}
+$BASE = BASE_DATA[8]
+$TOOL = TOOL_DATA[4]
+
+
+; Basic PTP parameters
+BAS (#VEL_PTP,100)
+BAS (#ACC_PTP,100)
+
+; CP motion parameters (critical for WAAM quality)
+BAS (#VEL_CP,0.0400)
+BAS (#ACC_CP,0.05)
+
+; Complete velocity and acceleration initialization
+$VEL.CP = 0.0400        ; Cartesian path velocity (m/s)
+$ACC.CP = 0.05                              ; Cartesian path acceleration (m/s²)
+$VEL.ORI1 = 90                              ; Swivel velocity (°/s)
+$VEL.ORI2 = 90                              ; Rotational velocity (°/s)
+$ACC.ORI1 = 500                             ; Swivel acceleration (°/s²)
+$ACC.ORI2 = 500                             ; Rotational acceleration (°/s²)
+
+; Orientation control for consistent torch angle
+$ORI_TYPE = #VAR                            ; Smooth orientation interpolation
+
+; Advance run control - CRITICAL for welding
+$ADVANCE = 1                                ; Reduced advance for precise I/O timing
+
+; Default approximation distance
+$APO.CDIS = 2.00             ; Default blending distance (mm)
+
+; Move to safe start position
+PTP HOME
+
+; Initialize welding system
+CONTINUE                                    ; Prevent advance run stop
+$OUT[1] = FALSE                ; Ensure torch is OFF
+WAIT SEC 0.5                                ; System stabilization
+
+;===========
+; BEGIN WAAM PROCESS
+;===========
+
+LIN {X 0.000, Y 0.000, Z 0.000, A 129.7, B -46.5, C 162.4}
+LIN {X 0.000, Y 0.000, Z 2.400, A 129.7, B -46.5, C 162.4}
+LIN {X 1.500, Y 3.000, Z 2.400, A 129.7, B -46.5, C 162.4}
+LIN {X 1.500, Y 3.000, Z 2.000, A 129.7, B -46.5, C 162.4}
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 1.500, Y 3.000, Z 2.000, A 129.7, B -46.5, C 162.4}
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 98.500, Y 3.000, Z 2.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 95.998, Y 3.000, Z 2.000, A 129.7, B -46.5, C 162.4}
+LIN {X 95.998, Y 3.000, Z 4.000, A 129.7, B -46.5, C 162.4}
+LIN {X 95.998, Y 3.000, Z 4.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 4.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 4.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 1 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 4.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 4.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 4.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 6.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 6.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 6.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 6.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 2 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 6.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 6.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 6.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 8.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 8.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 8.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 8.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 3 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 8.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 8.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 8.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 10.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 10.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 10.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 10.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 4 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 10.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 10.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 10.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 12.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 12.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 12.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 12.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 5 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 12.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 12.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 12.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 14.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 14.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 14.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 14.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 6 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 14.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 14.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 14.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 16.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 16.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 16.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 16.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 7 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 16.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 16.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 16.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 18.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 18.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 18.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 18.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 8 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 18.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+LIN {X 1.500, Y 3.000, Z 18.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 18.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 20.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 20.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 20.400, A 129.7, B -46.5, C 162.4}
+LIN {X 98.500, Y 3.000, Z 20.000, A 129.7, B -46.5, C 162.4}
+;===========
+; LAYER 9 COMPLETE - Thermal Management
+;===========
+WAIT SEC 1.00
+
+
+;--- TORCH ON - Start Welding ---
+; Stop and stabilize
+$VEL.CP = 0.1
+WAIT SEC 0
+WAIT SEC 0.20
+
+CONTINUE
+$OUT[1] = TRUE
+WAIT SEC 0.30
+
+; Arc stabilization at reduced speed
+$VEL.CP = 0.0060
+WAIT SEC 0.20
+
+LIN {X 98.500, Y 3.000, Z 20.000, A 129.7, B -46.5, C 162.4}
+WAIT SEC 0  ; Exact positioning
+
+; Set speed to 3.0 mm/s
+$VEL.CP = 0.0030
+$APO.CDIS = 0.38
+LIN {X 1.500, Y 3.000, Z 20.000, A 129.7, B -46.5, C 162.4} C_DIS
+
+;--- TORCH OFF - Stop Welding ---
+; Slow for crater fill
+$VEL.CP = 0.0015
+WAIT SEC 0.1
+
+CONTINUE
+$OUT[1] = FALSE
+WAIT SEC 0.15
+
+; Post-weld stabilization
+WAIT SEC 0.10
+LIN {X 4.002, Y 3.000, Z 20.000, A 129.7, B -46.5, C 162.4}
+LIN {X 4.002, Y 3.000, Z 21.000, A 129.7, B -46.5, C 162.4}
+LIN {X 0.000, Y 200.000, Z 21.000, A 129.7, B -46.5, C 162.4}
+LIN {X 0.000, Y 200.000, Z 69.000, A 129.7, B -46.5, C 162.4}
+
+;===========
+; WAAM PROCESS COMPLETE
+;===========
+
+; Return to home position
+$VEL.CP = 0.0400
+LIN_REL {Z 20}                            ; Retract 20mm first
+WAIT SEC 0
+PTP HOME                                    ; Return home
+
+END

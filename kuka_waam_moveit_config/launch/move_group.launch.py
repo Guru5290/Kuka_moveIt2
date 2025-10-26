@@ -6,12 +6,12 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 import yaml
+import os
 
 
 def load_yaml(package_name, file_path):
     """Load yaml file"""
     from ament_index_python.packages import get_package_share_directory
-    import os
     
     package_path = get_package_share_directory(package_name)
     absolute_file_path = os.path.join(package_path, file_path)
@@ -52,18 +52,23 @@ def launch_setup(context, *args, **kwargs):
         'robot_description': ParameterValue(robot_description_content, value_type=str)
     }
     
-    # SRDF
-    robot_description_semantic_content = Command([
-        'cat ',
-        PathJoinSubstitution([
-            FindPackageShare('kuka_waam_moveit_config'),
-            'config',
-            'kr6_waam.srdf'
-        ])
-    ])
+    # SRDF - Load as string with proper encoding
+    from ament_index_python.packages import get_package_share_directory
+    srdf_path = os.path.join(
+        get_package_share_directory('kuka_waam_moveit_config'),
+        'config',
+        'kr6_waam.srdf'
+    )
+    
+    try:
+        with open(srdf_path, 'r') as file:
+            robot_description_semantic_content = file.read()
+    except FileNotFoundError:
+        print(f"ERROR: SRDF file not found at {srdf_path}")
+        robot_description_semantic_content = ""
     
     robot_description_semantic = {
-        'robot_description_semantic': robot_description_semantic_content.perform(context)
+        'robot_description_semantic': robot_description_semantic_content
     }
     
     # Kinematics
@@ -73,7 +78,8 @@ def launch_setup(context, *args, **kwargs):
     )
     
     if not kinematics_yaml:
-        print("WARNING: kinematics.yaml is empty or not found!")
+        print("ERROR: kinematics.yaml is empty or not found!")
+        print("       MoveIt will not work without kinematics configuration!")
     
     robot_description_kinematics = {
         'robot_description_kinematics': kinematics_yaml
@@ -108,6 +114,11 @@ def launch_setup(context, *args, **kwargs):
         'kuka_waam_moveit_config',
         'config/moveit_controllers.yaml'
     )
+    
+    if not moveit_controllers_yaml:
+        print("ERROR: moveit_controllers.yaml is empty or not found!")
+        print("       MoveIt will not be able to execute trajectories!")
+    
     moveit_controllers = {
         'moveit_simple_controller_manager': moveit_controllers_yaml,
         'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager'
@@ -142,7 +153,7 @@ def launch_setup(context, *args, **kwargs):
             'joint_state_topic': '/joint_states',
             'attached_collision_object_topic': '/moveit_attached_collision_object',
             'publish_planning_scene_topic': '/moveit_publish_planning_scene',
-            'monitored_planning_scene_topic': '/moveit_monitored_planning_scene',
+            'monitored_planning_scene_topic': '/monitored_planning_scene',
             'wait_for_initial_state_timeout': 10.0,
         }
     }
@@ -170,7 +181,6 @@ def launch_setup(context, *args, **kwargs):
     )
     
     # Base nodes - ONLY loaded when NOT using Gazebo
-    # (i.e., when using fake hardware or real hardware standalone)
     base_nodes = []
     
     if load_base_nodes == 'true':

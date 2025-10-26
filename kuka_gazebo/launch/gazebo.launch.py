@@ -40,6 +40,7 @@ def launch_setup(context, *args, **kwargs):
         tf_prefix = ns.perform(context) + "_"
 
     # Get URDF via xacro
+    from launch_ros.parameter_descriptions import ParameterValue
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -80,7 +81,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Get URDF via xacro
-    robot_description = {"robot_description": robot_description_content}
+    robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
 
     robot_state_publisher = Node(
         namespace=ns,

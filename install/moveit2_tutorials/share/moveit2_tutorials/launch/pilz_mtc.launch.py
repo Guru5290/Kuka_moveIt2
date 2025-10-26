@@ -1,0 +1,1 @@
+/home/d/Kuka_moveIt2/moveit2_tutorials/doc/examples/pilz_industrial_motion_planner/launch/pilz_mtc.launch.py
