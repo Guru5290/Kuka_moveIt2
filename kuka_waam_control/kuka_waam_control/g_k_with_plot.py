@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Enhanced WAAM Transpiler with Critical Fixes:
+Enhanced WAAM Transpiler with 3D Visualization:
 - Dynamic torch orientation based on path direction
-- E-delta based welding detection (not absolute E values)
+- E-delta based welding detection
 - Fixed distance calculations using transformed coordinates
 - Speed ramping implementation
-- Proper layer detection
-- First layer Z handling
-- Optimized performance
+- Matplotlib 3D path visualization
+- Torch orientation vector display
 """
 
 import sys
@@ -17,6 +16,16 @@ import math
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 from enum import Enum
+
+# Visualization imports (optional)
+try:
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+    import numpy as np
+    VISUALIZATION_AVAILABLE = True
+except ImportError:
+    VISUALIZATION_AVAILABLE = False
+    print("Warning: matplotlib not available. Visualization disabled.")
 
 class MoveType(Enum):
     RAPID = "G0"
@@ -34,7 +43,7 @@ class Point:
     x_base: float  # Transformed BASE frame coordinates (with arc offset if welding)
     y_base: float
     z_base: float
-    a: float = 129.7  # Orientation angles (will be calculated dynamically)
+    a: float = 129.7  # Orientation angles (calculated dynamically)
     b: float = -46.5
     c: float = 162.4
     move_type: MoveType = MoveType.LINEAR
@@ -50,6 +59,21 @@ class Point:
             (self.y_base - other.y_base)**2 + 
             (self.z_base - other.z_base)**2
         )
+    
+    def get_orientation_vector(self, length: float = 20.0) -> Tuple[float, float, float]:
+        """Calculate torch direction vector from orientation angles for visualization"""
+        # Convert angles to radians
+        a_rad = math.radians(self.a)
+        b_rad = math.radians(self.b)
+        c_rad = math.radians(self.c)
+        
+        # Simplified: torch points in direction based primarily on C (yaw) and B (pitch)
+        # This is an approximation for visualization
+        vx = length * math.cos(b_rad) * math.cos(c_rad)
+        vy = length * math.cos(b_rad) * math.sin(c_rad)
+        vz = length * math.sin(b_rad)
+        
+        return (vx, vy, vz)
 
 # KUKA KR6 R900-2 Specifications
 ROBOT_SPECS = {
@@ -61,7 +85,7 @@ ROBOT_SPECS = {
 }
 
 # Coordinate transformation
-PRUSASLICER_ORIGIN = {'x': 0, 'y': 0, 'z': -2}
+PRUSASLICER_ORIGIN = {'x': 0, 'y': 0, 'z': 0}
 
 # WAAM Parameters
 WAAM_PARAMS = {
@@ -75,13 +99,13 @@ WAAM_PARAMS = {
     'layer_height': 2.0,
     'start_speed_factor': 0.4,
     'end_speed_factor': 0.5,
-    'ramp_distance': 5.0,  # mm over which to ramp speed
+    'ramp_distance': 5.0,
     'max_blend_distance': 2.0,
     'min_blend_distance': 0.1,
     'corner_angle_threshold': 45,
-    'min_extrusion_threshold': 0.001,  # Minimum E-delta for welding
+    'min_extrusion_threshold': 0.001,
     'torch_output': 1,
-    'orientation_lookahead': 3,  # Number of points to look ahead for orientation
+    'orientation_lookahead': 3,
 }
 
 # KRL Templates
@@ -149,49 +173,41 @@ END
 
 
 class WAAMTranspiler:
-    """Enhanced WAAM transpiler with dynamic orientation and fixes"""
+    """Enhanced WAAM transpiler with visualization"""
     
     def __init__(self):
         self.current_pos = [0.0, 0.0, 0.0]
         self.welding_active = False
         self.position_mode = PositionMode.ABSOLUTE
         self.warnings = []
-        self.current_e = 0.0  # Track E position for delta calculation
+        self.current_e = 0.0
         self.previous_e = 0.0
         
     def transform_to_base(self, x: float, y: float, z: float, welding: bool = False) -> Tuple[float, float, float]:
         """Transform G-code coordinates to BASE frame with arc length offset"""
         x_base = PRUSASLICER_ORIGIN['x'] + x
         y_base = PRUSASLICER_ORIGIN['y'] + y
-        
-        # Add arc length offset to Z ONLY when welding
         z_offset = WAAM_PARAMS['arc_length'] if welding else 0.0
         z_base = PRUSASLICER_ORIGIN['z'] + z + z_offset
-        
         return (x_base, y_base, z_base)
     
     def calculate_orientation(self, points: List[Point], index: int) -> Tuple[float, float, float]:
-        """
-        Calculate torch orientation based on path direction (look-ahead method)
-        Returns (A, B, C) orientation angles
-        """
+        """Calculate torch orientation based on path direction (look-ahead method)"""
         if not points[index].welding:
-            # Use default orientation for travel moves
             return (129.7, -46.5, 162.4)
         
-        # Look ahead to get path direction
         lookahead = WAAM_PARAMS['orientation_lookahead']
-        
-        # Find next valid welding point
         direction_point = None
+        
+        # Look ahead
         for i in range(index + 1, min(index + lookahead + 1, len(points))):
             if points[i].welding:
                 dist = points[index].distance_to(points[i])
-                if dist > 1.0:  # Minimum distance for meaningful direction
+                if dist > 1.0:
                     direction_point = points[i]
                     break
         
-        # If no good look-ahead, use previous point
+        # Look behind if no ahead
         if direction_point is None and index > 0:
             for i in range(index - 1, max(index - lookahead - 1, -1), -1):
                 if points[i].welding:
@@ -200,16 +216,14 @@ class WAAMTranspiler:
                         direction_point = points[i]
                         break
         
-        # If still no direction, use default
         if direction_point is None:
             return (129.7, -46.5, 162.4)
         
-        # Calculate direction vector (in BASE frame)
+        # Direction vector
         dx = direction_point.x_base - points[index].x_base
         dy = direction_point.y_base - points[index].y_base
         dz = direction_point.z_base - points[index].z_base
         
-        # Normalize
         mag = math.sqrt(dx*dx + dy*dy + dz*dz)
         if mag < 0.001:
             return (129.7, -46.5, 162.4)
@@ -218,18 +232,9 @@ class WAAMTranspiler:
         dy /= mag
         dz /= mag
         
-        # Calculate orientation to align torch with path
-        # Torch should point in direction of travel with slight downward angle
-        
-        # C rotation (around Z) - yaw angle
+        # Calculate orientation
         c = math.degrees(math.atan2(dy, dx))
-        
-        # B rotation (pitch) - keep torch at slight angle (e.g., 45 degrees from vertical)
-        # For WAAM, typically want torch pointing slightly forward and down
-        b = -45.0  # Standard push angle for WAAM
-        
-        # A rotation - can be adjusted based on horizontal plane direction
-        # Keep relatively constant for stability
+        b = -45.0  # Standard push angle
         a = 130.0
         
         return (a, b, c)
@@ -240,7 +245,6 @@ class WAAMTranspiler:
         original_line = line
         line = line.upper()
         
-        # Check for layer markers
         is_layer_change = ';LAYER_CHANGE' in original_line
         layer_num = None
         if is_layer_change:
@@ -251,7 +255,6 @@ class WAAMTranspiler:
         if not line or line.startswith(';') or line.startswith('('):
             return None
         
-        # Handle positioning modes
         if 'G90' in line:
             self.position_mode = PositionMode.ABSOLUTE
             return None
@@ -259,7 +262,6 @@ class WAAMTranspiler:
             self.position_mode = PositionMode.RELATIVE
             return None
         
-        # Handle G92 E reset
         if 'G92' in line:
             e_match = re.search(r'E([-+]?[0-9]*\.?[0-9]+)', line)
             if e_match:
@@ -267,7 +269,6 @@ class WAAMTranspiler:
                 self.previous_e = self.current_e
             return None
         
-        # Determine move type
         move_type = None
         if 'G0' in line or 'G00' in line:
             move_type = MoveType.RAPID
@@ -276,13 +277,11 @@ class WAAMTranspiler:
         else:
             return None
         
-        # Extract coordinates
         x_match = re.search(r'X([-+]?[0-9]*\.?[0-9]+)', line)
         y_match = re.search(r'Y([-+]?[0-9]*\.?[0-9]+)', line)
         z_match = re.search(r'Z([-+]?[0-9]*\.?[0-9]+)', line)
         e_match = re.search(r'E([-+]?[0-9]*\.?[0-9]+)', line)
         
-        # Parse coordinates
         if self.position_mode == PositionMode.ABSOLUTE:
             x = float(x_match.group(1)) if x_match else self.current_pos[0]
             y = float(y_match.group(1)) if y_match else self.current_pos[1]
@@ -292,27 +291,22 @@ class WAAMTranspiler:
             y = self.current_pos[1] + (float(y_match.group(1)) if y_match else 0.0)
             z = self.current_pos[2] + (float(z_match.group(1)) if z_match else 0.0)
         
-        # Calculate E delta
         e_delta = 0.0
         if e_match:
             self.current_e = float(e_match.group(1))
             e_delta = self.current_e - self.previous_e
             self.previous_e = self.current_e
         
-        # Detect welding from E-delta (positive = extrusion = welding)
-        # Also handle M-codes
         weld_from_e = e_delta > WAAM_PARAMS['min_extrusion_threshold']
         weld_on_cmd = 'M3' in line or 'M03' in line
         weld_off_cmd = 'M5' in line or 'M05' in line or 'M107' in line
         
         if weld_on_cmd or weld_from_e:
             self.welding_active = True
-        elif weld_off_cmd or e_delta < -0.01:  # Retraction
+        elif weld_off_cmd or e_delta < -0.01:
             self.welding_active = False
         
-        # Transform coordinates
         x_base, y_base, z_base = self.transform_to_base(x, y, z, self.welding_active)
-        
         self.current_pos = [x, y, z]
         
         return Point(
@@ -326,23 +320,21 @@ class WAAMTranspiler:
         )
     
     def detect_layers(self, points: List[Point]) -> None:
-        """Detect and mark layer boundaries using Z changes"""
+        """Detect and mark layer boundaries"""
         if not points:
             return
         
         current_layer = 0
         last_weld_z = None
         
-        for i, point in enumerate(points):
+        for point in points:
             if not point.welding:
                 continue
             
-            # Use original Z (not transformed) for layer detection
             current_z = point.z
             
             if last_weld_z is not None:
                 z_diff = current_z - last_weld_z
-                # Layer change: significant Z increase
                 if z_diff >= WAAM_PARAMS['layer_height'] * 0.9:
                     current_layer += 1
                     point.is_layer_change = True
@@ -362,14 +354,12 @@ class WAAMTranspiler:
         prev_point = points[index - 1]
         next_point = points[index + 1]
         
-        # Use transformed coordinates for distance
         dist_to_prev = point.distance_to(prev_point)
         dist_to_next = point.distance_to(next_point)
         
         if dist_to_prev < 0.1 or dist_to_next < 0.1:
             return 0.0
         
-        # Calculate angle using transformed coordinates
         v1 = [point.x_base - prev_point.x_base, 
               point.y_base - prev_point.y_base, 
               point.z_base - prev_point.z_base]
@@ -402,12 +392,117 @@ class WAAMTranspiler:
         
         return blend if blend > WAAM_PARAMS['min_blend_distance'] else 0.0
     
-    def calculate_cumulative_distance(self, points: List[Point], start_idx: int, end_idx: int) -> float:
-        """Calculate cumulative distance along path"""
-        total = 0.0
-        for i in range(start_idx, min(end_idx, len(points) - 1)):
-            total += points[i].distance_to(points[i + 1])
-        return total
+    def visualize_path(self, points: List[Point], output_path: str = None):
+        """Create 3D visualization of the tool path with orientation vectors"""
+        if not VISUALIZATION_AVAILABLE:
+            print("\nVisualization skipped (matplotlib not available)")
+            return
+        
+        # Separate weld and travel points
+        weld_points = [p for p in points if p.welding]
+        travel_points = [p for p in points if not p.welding]
+        
+        # Create figure with subplots
+        fig = plt.figure(figsize=(16, 12))
+        
+        # Main 3D view
+        ax1 = fig.add_subplot(2, 2, 1, projection='3d')
+        
+        # Plot travel moves (blue, thin)
+        if travel_points:
+            travel_x = [p.x_base for p in travel_points]
+            travel_y = [p.y_base for p in travel_points]
+            travel_z = [p.z_base for p in travel_points]
+            ax1.plot(travel_x, travel_y, travel_z, 'b-', linewidth=0.5, alpha=0.3, label='Travel')
+        
+        # Plot weld moves by layer (different colors)
+        layers = set(p.layer_num for p in weld_points if p.layer_num is not None)
+        colors = plt.cm.viridis(np.linspace(0, 1, max(len(layers), 1)))
+        
+        for i, layer in enumerate(sorted(layers)):
+            layer_points = [p for p in weld_points if p.layer_num == layer]
+            if layer_points:
+                lx = [p.x_base for p in layer_points]
+                ly = [p.y_base for p in layer_points]
+                lz = [p.z_base for p in layer_points]
+                ax1.plot(lx, ly, lz, color=colors[i], linewidth=2, label=f'Layer {layer}')
+        
+        # Plot orientation vectors (every Nth weld point)
+        sample_rate = max(1, len(weld_points) // 20)  # Show ~20 vectors
+        for i in range(0, len(weld_points), sample_rate):
+            p = weld_points[i]
+            vx, vy, vz = p.get_orientation_vector(length=15.0)
+            ax1.quiver(p.x_base, p.y_base, p.z_base, vx, vy, vz,
+                      color='red', alpha=0.6, arrow_length_ratio=0.3, linewidth=1.5)
+        
+        ax1.set_xlabel('X (mm)')
+        ax1.set_ylabel('Y (mm)')
+        ax1.set_zlabel('Z (mm)')
+        ax1.set_title('3D Tool Path with Torch Orientation')
+        ax1.legend(loc='upper left', fontsize=8)
+        ax1.grid(True, alpha=0.3)
+        
+        # Top view (XY plane)
+        ax2 = fig.add_subplot(2, 2, 2)
+        if travel_points:
+            ax2.plot([p.x_base for p in travel_points], 
+                    [p.y_base for p in travel_points], 
+                    'b-', linewidth=0.5, alpha=0.3)
+        for i, layer in enumerate(sorted(layers)):
+            layer_points = [p for p in weld_points if p.layer_num == layer]
+            if layer_points:
+                ax2.plot([p.x_base for p in layer_points],
+                        [p.y_base for p in layer_points],
+                        color=colors[i], linewidth=2, label=f'Layer {layer}')
+        ax2.set_xlabel('X (mm)')
+        ax2.set_ylabel('Y (mm)')
+        ax2.set_title('Top View (XY)')
+        ax2.grid(True, alpha=0.3)
+        ax2.axis('equal')
+        
+        # Side view (XZ plane)
+        ax3 = fig.add_subplot(2, 2, 3)
+        if travel_points:
+            ax3.plot([p.x_base for p in travel_points],
+                    [p.z_base for p in travel_points],
+                    'b-', linewidth=0.5, alpha=0.3)
+        for i, layer in enumerate(sorted(layers)):
+            layer_points = [p for p in weld_points if p.layer_num == layer]
+            if layer_points:
+                ax3.plot([p.x_base for p in layer_points],
+                        [p.z_base for p in layer_points],
+                        color=colors[i], linewidth=2)
+        ax3.set_xlabel('X (mm)')
+        ax3.set_ylabel('Z (mm)')
+        ax3.set_title('Side View (XZ)')
+        ax3.grid(True, alpha=0.3)
+        
+        # Front view (YZ plane)
+        ax4 = fig.add_subplot(2, 2, 4)
+        if travel_points:
+            ax4.plot([p.y_base for p in travel_points],
+                    [p.z_base for p in travel_points],
+                    'b-', linewidth=0.5, alpha=0.3)
+        for i, layer in enumerate(sorted(layers)):
+            layer_points = [p for p in weld_points if p.layer_num == layer]
+            if layer_points:
+                ax4.plot([p.y_base for p in layer_points],
+                        [p.z_base for p in layer_points],
+                        color=colors[i], linewidth=2)
+        ax4.set_xlabel('Y (mm)')
+        ax4.set_ylabel('Z (mm)')
+        ax4.set_title('Front View (YZ)')
+        ax4.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        
+        # Save if output path provided
+        if output_path:
+            viz_path = output_path.replace('.src', '_visualization.png')
+            plt.savefig(viz_path, dpi=150, bbox_inches='tight')
+            print(f"\n Visualization saved: {viz_path}")
+        
+        plt.show()
     
     def generate_krl(self, points: List[Point], program_name: str = "WAAM_PART") -> str:
         """Generate optimized KRL with dynamic orientation and speed ramping"""
@@ -422,18 +517,15 @@ class WAAMTranspiler:
                 filtered.append(points[i])
         points = filtered
         
-        # Detect layers
         self.detect_layers(points)
         
-        # Calculate orientations for all welding points
+        # Calculate orientations
         for i in range(len(points)):
             if points[i].welding:
                 a, b, c = self.calculate_orientation(points, i)
                 points[i].a, points[i].b, points[i].c = a, b, c
         
         krl_lines = []
-        
-        # Header
         krl_lines.append(HEADER_SRC.format(
             program_name=program_name,
             default_travel_speed=ROBOT_SPECS['default_travel_speed'],
@@ -441,7 +533,6 @@ class WAAMTranspiler:
             torch_output=WAAM_PARAMS['torch_output']
         ))
         
-        # Generation loop with state tracking
         torch_on = False
         prev_welding = False
         prev_layer = None
@@ -452,7 +543,6 @@ class WAAMTranspiler:
         TRAVEL_SPEED = ROBOT_SPECS['default_travel_speed']
         
         for i, point in enumerate(points):
-            # Layer transition
             if point.is_layer_change and point.layer_num != prev_layer and prev_layer is not None:
                 if torch_on:
                     krl_lines.append("\n; Turn off torch for layer transition\n")
@@ -463,7 +553,6 @@ class WAAMTranspiler:
                 krl_lines.append(f"\n;========== LAYER {point.layer_num} ==========\n")
                 krl_lines.append(f"WAIT SEC {WAAM_PARAMS['inter_layer_delay']:.2f}\n\n")
             
-            # Torch control
             if point.welding and not torch_on:
                 krl_lines.append("\n;--- TORCH ON ---\n")
                 krl_lines.append(f"$VEL.CP = 0.001\nWAIT SEC 0\n")
@@ -474,14 +563,12 @@ class WAAMTranspiler:
                 weld_segment_start = i
                 cumulative_weld_dist = 0.0
                 
-                # Start at reduced speed
                 start_speed = WELD_SPEED * WAAM_PARAMS['start_speed_factor']
                 krl_lines.append(f"; Arc start at {start_speed*1000:.1f} mm/s\n")
                 krl_lines.append(f"$VEL.CP = {start_speed:.4f}\n")
                 krl_lines.append(f"WAIT SEC {WAAM_PARAMS['arc_stabilization']:.2f}\n\n")
                 
             elif not point.welding and torch_on:
-                # Crater fill
                 crater_speed = WELD_SPEED * WAAM_PARAMS['end_speed_factor']
                 krl_lines.append(f"\n; Crater fill at {crater_speed*1000:.1f} mm/s\n")
                 krl_lines.append(f"$VEL.CP = {crater_speed:.4f}\nWAIT SEC 0.1\n\n")
@@ -493,31 +580,25 @@ class WAAMTranspiler:
                 torch_on = False
                 weld_segment_start = None
             
-            # Speed ramping during welding
             if point.welding and weld_segment_start is not None and i > 0:
                 cumulative_weld_dist += points[i-1].distance_to(point)
                 
-                # Ramp to full speed over ramp_distance
                 if cumulative_weld_dist >= WAAM_PARAMS['ramp_distance']:
-                    # Check if we just crossed threshold
                     prev_dist = cumulative_weld_dist - points[i-1].distance_to(point)
                     if prev_dist < WAAM_PARAMS['ramp_distance']:
                         krl_lines.append(f"; Ramp to full weld speed {WELD_SPEED*1000:.1f} mm/s\n")
                         krl_lines.append(f"$VEL.CP = {WELD_SPEED:.4f}\n\n")
             
-            # Set travel speed when transitioning from weld to travel
             if not point.welding and prev_welding:
                 krl_lines.append(f"; Travel speed {TRAVEL_SPEED*1000:.1f} mm/s\n")
                 krl_lines.append(f"$VEL.CP = {TRAVEL_SPEED:.4f}\n\n")
             
-            # Motion command
             pos_str = f"{{X {point.x_base:.3f}, Y {point.y_base:.3f}, Z {point.z_base:.3f}, " \
                      f"A {point.a:.1f}, B {point.b:.1f}, C {point.c:.1f}}}"
             
             if point.move_type == MoveType.RAPID:
                 krl_lines.append(f"PTP {pos_str}\n")
             else:
-                # Calculate blending
                 blend = 0.0
                 if point.welding and prev_welding and not point.is_layer_change:
                     blend = self.calculate_blend_distance(points, i)
@@ -533,13 +614,11 @@ class WAAMTranspiler:
             prev_welding = point.welding
             prev_layer = point.layer_num
         
-        # Final torch off
         if torch_on:
             krl_lines.append("\n; Final torch off\n")
             krl_lines.append(f"CONTINUE\n$OUT[{WAAM_PARAMS['torch_output']}] = FALSE\n")
             krl_lines.append(f"WAIT SEC {WAAM_PARAMS['arc_off_delay']:.2f}\n")
         
-        # Footer
         krl_lines.append(FOOTER_SRC.format(
             default_travel_speed=ROBOT_SPECS['default_travel_speed']
         ))
@@ -547,7 +626,7 @@ class WAAMTranspiler:
         return "".join(krl_lines)
     
     def generate_statistics(self, points: List[Point]) -> dict:
-        """Calculate statistics using transformed coordinates"""
+        """Calculate statistics"""
         weld_points = [p for p in points if p.welding]
         travel_points = [p for p in points if not p.welding]
         
@@ -568,12 +647,12 @@ class WAAMTranspiler:
             'warnings': len(self.warnings)
         }
     
-    def process_file(self, input_path: str, output_path: str):
-        """Process G-code and generate KRL"""
+    def process_file(self, input_path: str, output_path: str, visualize: bool = True):
+        """Process G-code and generate KRL with optional visualization"""
         points = []
         
         print(f"\n{'='*70}")
-        print(f"  WAAM Transpiler - Fixed & Optimized")
+        print(f"  WAAM Transpiler - Fixed & Optimized with Visualization")
         print(f"{'='*70}")
         print(f"\nInput:  {input_path}")
         
@@ -635,17 +714,33 @@ class WAAMTranspiler:
             print(f"\n Warnings ({len(self.warnings)}):")
             for w in list(set(self.warnings))[:5]:
                 print(f"   • {w}")
+        
+        # Generate visualization
+        if visualize and VISUALIZATION_AVAILABLE:
+            print("\nGenerating 3D visualization...")
+            self.visualize_path(points, output_path)
+        elif visualize and not VISUALIZATION_AVAILABLE:
+            print("\n Note: Install matplotlib for visualization:")
+            print("   pip install matplotlib numpy")
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("\n" + "="*70)
-        print("  WAAM Transpiler - Fixed & Optimized")
+        print("  WAAM Transpiler - Fixed & Optimized with Visualization")
         print("\nUsage:")
-        print("  python transpiler.py <gcode_file>")
+        print("  python transpiler.py <gcode_file> [--no-viz]")
+        print("\nOptions:")
+        print("  --no-viz    Skip 3D visualization")
         print("\nOutput:")
-        print("  • <name>.src  (KRL source)")
-        print("  • <name>.dat  (KRL data)")
+        print("  • <name>.src              (KRL source)")
+        print("  • <name>.dat              (KRL data)")
+        print("  • <name>_visualization.png (3D path plot)")
+        print("\nVisualization shows:")
+        print("  • 3D tool path with layers in different colors")
+        print("  • Red arrows showing torch orientation")
+        print("  • Top, side, and front view projections")
+        print("  • Travel moves (blue) vs weld moves (colored by layer)")
         print("\n" + "="*70 + "\n")
         sys.exit(1)
     
@@ -654,11 +749,14 @@ def main():
         print(f"\n ERROR: File not found: {gcode_file}\n")
         sys.exit(1)
     
+    # Check for --no-viz flag
+    visualize = '--no-viz' not in sys.argv
+    
     base_name = os.path.splitext(os.path.basename(gcode_file))[0]
     src_file = base_name + ".src"
     
     transpiler = WAAMTranspiler()
-    transpiler.process_file(gcode_file, src_file)
+    transpiler.process_file(gcode_file, src_file, visualize=visualize)
 
 
 if __name__ == "__main__":
